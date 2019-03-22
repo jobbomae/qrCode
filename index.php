@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Demo Sheety 002</title>
+<title>สรุปการติดต่อราชการด้วย QR Code ของศาลจังหวัดหล่มสัก</title>
 <meta charset="utf-8"> 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -101,9 +101,9 @@ const data = [
         },
         {
             num: 13,
-            name: "แบบขอใช้บริการล่วงหน้ากลุ่มงานบริหารจัดการคดี ",
+            name: "แบบขอใช้บริการล่วงหน้ากลุ่มงานบริหารจัดการคดี (ขอคัดถ่าย / ตรวจสำนวน)",
             url: "",
-            api: "https://api.sheety.co/8cead4ff-029b-4a08-9e98-04c069ef4fc5"
+            api: "https://api.sheety.co/31c0d4c3-1495-4080-93d1-a6234cb470be"
         },
         {
             num: 14,
@@ -143,9 +143,26 @@ function displayTable(){
     $('#div_table').html(html);
 
     // render count
+    var date = new Date();
+    var today = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
     data.forEach(function(item){
         $.getJSON(item.api, function(_data){
             let count = _data.length;
+            // console.log(_data);
+            const rs = _data.filter(d => {
+                if(d['timestamp']!=undefined){
+                    return d['timestamp'].includes(today);
+                }else if(d['ประทับเวลา']!=undefined){
+                    return d['ประทับเวลา'].includes(today);
+                }
+                return false;
+            } );
+            const new_count = rs.length;
+            // console.log(new_count);
+            if(new_count > 0){
+                count += ` <badge class='badge badge-danger'>NEW(${new_count})</badge>`
+            }
+
             $(`#count_${item.num}`).html(count);
         })
     })
